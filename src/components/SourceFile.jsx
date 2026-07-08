@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { store, KEYS } from '../lib/storage.js';
 
-export default function SourceFile({ strings, value, firstRun, onChange, onCopyFile, onReset }) {
+export default function SourceFile({ strings, value, firstRun, onChange, onCopyFile, onDownload, onReset }) {
   // always starts collapsed; firstRun still drives the attention glow
   const [open, setOpen] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -65,6 +65,9 @@ export default function SourceFile({ strings, value, firstRun, onChange, onCopyF
         <div className="filebar">
           <button className="btn small ghost" type="button" onClick={onCopyFile}>
             {strings.copyFile}
+          </button>
+          <button className="btn small ghost" type="button" onClick={onDownload}>
+            {strings.download}
           </button>
           <button className="btn small ghost" type="button" onClick={handleReset}>
             {strings.reset}

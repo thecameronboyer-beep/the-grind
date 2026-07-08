@@ -1,31 +1,53 @@
 export default function EmojiDeck({ strings, chips, sel, combo, onToggle, onClear }) {
+  const prefixes = strings.prefixes;
   return (
-    <div className="card">
-      {strings.rows.map((row) => (
-        <div key={row.kind}>
-          <div className={`rowlabel ${row.accent}`}>{row.label}</div>
-          <div className={`chips ${chips[row.kind].length === 6 ? 'six' : 'three'}`}>
-            {chips[row.kind].map((chip, i) => (
+    <>
+      <div className="card">
+        <div>
+          <div className={`rowlabel ${prefixes.accent}`}>{prefixes.label}</div>
+          <div className="chips four">
+            {prefixes.chips.map((emoji, i) => (
               <button
                 key={i}
                 type="button"
-                className={`chip ${row.accent}`}
-                aria-pressed={sel[row.kind] === i}
-                onClick={() => onToggle(row.kind, i)}
+                className={`chip ${prefixes.accent}`}
+                aria-pressed={sel.prefix.includes(i)}
+                onClick={() => onToggle('prefix', i)}
               >
-                <span className="chip-emoji">{chip.emoji}</span>
-                <span className="chip-label">{chip.label}</span>
+                <span className="chip-emoji">{emoji}</span>
               </button>
             ))}
           </div>
         </div>
-      ))}
-      <div className={`selbar${combo ? ' show' : ''}`}>
-        {strings.selbarPrefix} <span className="combo">{combo}</span>
-        <button type="button" onClick={onClear}>
-          {strings.clear}
-        </button>
       </div>
-    </div>
+      <div className="gap" />
+      <div className="card">
+        {strings.rows.map((row) => (
+          <div key={row.kind}>
+            <div className={`rowlabel ${row.accent}`}>{row.label}</div>
+            <div className={`chips ${chips[row.kind].length === 6 ? 'six' : 'three'}`}>
+              {chips[row.kind].map((chip, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className={`chip ${row.accent}`}
+                  aria-pressed={sel[row.kind] === i}
+                  onClick={() => onToggle(row.kind, i)}
+                >
+                  <span className="chip-emoji">{chip.emoji}</span>
+                  <span className="chip-label">{chip.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+        <div className={`selbar${combo ? ' show' : ''}`}>
+          {strings.selbarPrefix} <span className="combo">{combo}</span>
+          <button type="button" onClick={onClear}>
+            {strings.clear}
+          </button>
+        </div>
+      </div>
+    </>
   );
 }

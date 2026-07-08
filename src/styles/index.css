@@ -396,6 +396,7 @@ textarea::-webkit-scrollbar-thumb {
 
 .filebar {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: center;
   margin-top: 12px;
@@ -451,6 +452,10 @@ textarea::-webkit-scrollbar-thumb {
 
 .chips.three {
   grid-template-columns: repeat(3, 1fr);
+}
+
+.chips.four {
+  grid-template-columns: repeat(4, 1fr);
 }
 
 @keyframes bloom {

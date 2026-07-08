@@ -11,6 +11,8 @@ export const UI = {
     summary: 'the whole app is this text',
     copyFile: 'copy file',
     quickCopy: 'copy',
+    download: 'download .md',
+    downloadName: 'the-grind-source-file.md',
     reset: 'reset to default',
     savedTag: 'saved ✓',
     resetConfirm: 'Reset the source file to the default? Her edits will be gone gone.',
@@ -24,6 +26,15 @@ export const UI = {
       { kind: 'effort', label: 'EFFORT · POST-WORKOUT',    accent: 'a2' },
       { kind: 'food',   label: 'FOOD MODE · POST-WORKOUT', accent: 'a3' },
     ],
+    // The voice-layer prefixes from the source file. Protocol constants,
+    // not settings — dev mode never edits them. Emoji only, no labels:
+    // the deck never explains what a prefix does (mystery is the point).
+    // Up to two select at once and go to the FRONT of the combo.
+    prefixes: {
+      accent: 'a1',
+      label: 'PREFIXES · SEND 1-2 FIRST',
+      chips: ['👴', '👵', '🤓', '🤮'],
+    },
     selbarPrefix: 'on clipboard:',
     clear: 'clear ×',
   },
@@ -171,6 +182,7 @@ export const COMBO_MATRIX = {
 
 export const TOASTS = {
   fileCopied: 'file copied — back it up in Keep',
+  fileDownloaded: 'file downloaded — backup secured 📄',
   factoryReset: 'back to factory settings',
   comboCopied: (combo) => 'copied ' + combo + ' — no cap',
   selectionCleared: 'selection cleared',

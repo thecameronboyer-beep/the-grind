@@ -32,7 +32,7 @@ export default function App() {
   const [settings, setSettings] = useState(loadSettings);
   const [fileText, setFileText] = useState(() => store.get(KEYS.file) ?? DEFAULT_FILE);
   const [firstRun] = useState(() => store.get(KEYS.file) === null);
-  const [sel, setSel] = useState({ mood: null, effort: null, food: null });
+  const [sel, setSel] = useState({ prefix: [], mood: null, effort: null, food: null });
   const [toast, setToast] = useState({ message: '', show: false, action: null });
   const [fallbackText, setFallbackText] = useState(null);
   const [devOpen, setDevOpen] = useState(false);
@@ -71,14 +71,27 @@ export default function App() {
 
   const getFile = () => fileText.trim();
 
+  // prefixes always read out first, matching the source file's message
+  // grammar (up to TWO prefixes, then workflow emojis)
   const comboOf = (s) =>
-    UI.deck.rows
-      .map(({ kind }) => (s[kind] != null ? settings.chips[kind][s[kind]].emoji : null))
+    [
+      ...s.prefix.map((i) => UI.deck.prefixes.chips[i]),
+      ...UI.deck.rows.map(({ kind }) =>
+        s[kind] != null ? settings.chips[kind][s[kind]].emoji : null
+      ),
+    ]
       .filter(Boolean)
       .join(' ');
 
+  // prefix chips stack up to two; a third tap swaps out the oldest
+  const togglePrefix = (picked, index) =>
+    picked.includes(index) ? picked.filter((i) => i !== index) : [...picked, index].slice(-2);
+
   function toggleChip(kind, index) {
-    const next = { ...sel, [kind]: sel[kind] === index ? null : index };
+    const next =
+      kind === 'prefix'
+        ? { ...sel, prefix: togglePrefix(sel.prefix, index) }
+        : { ...sel, [kind]: sel[kind] === index ? null : index };
     setSel(next);
     const combo = comboOf(next);
     if (combo) copy(combo, TOASTS.comboCopied(combo));
@@ -86,12 +99,25 @@ export default function App() {
   }
 
   function clearSelection() {
-    setSel({ mood: null, effort: null, food: null });
+    setSel({ prefix: [], mood: null, effort: null, food: null });
     showToast(TOASTS.cleared);
   }
 
   function handleCopyFile() {
     copy(getFile(), TOASTS.fileCopied);
+  }
+
+  function handleDownloadFile() {
+    const blob = new Blob([getFile()], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = UI.sourceFile.downloadName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast(TOASTS.fileDownloaded);
   }
 
   function handleFileReset() {
@@ -204,6 +230,7 @@ export default function App() {
         firstRun={firstRun}
         onChange={setFileText}
         onCopyFile={handleCopyFile}
+        onDownload={handleDownloadFile}
         onReset={handleFileReset}
       />
 
