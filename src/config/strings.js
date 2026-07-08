@@ -10,6 +10,7 @@ export const UI = {
     subsec: 'lives here now · everything below bundles it automatically',
     summary: 'the whole app is this text',
     copyFile: 'copy file',
+    quickCopy: 'copy',
     reset: 'reset to default',
     savedTag: 'saved ✓',
     resetConfirm: 'Reset the source file to the default? Her edits will be gone gone.',

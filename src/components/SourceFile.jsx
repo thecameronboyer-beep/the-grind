@@ -39,7 +39,20 @@ export default function SourceFile({ strings, value, firstRun, onChange, onCopyF
       onToggle={(e) => setOpen(e.currentTarget.open)}
     >
       <summary>
-        {strings.summary} <span className="chev">▶</span>
+        {strings.summary}
+        {/* one-tap copy — preventDefault keeps the box from toggling */}
+        <button
+          className="btn small ghost file-copy"
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onCopyFile();
+          }}
+        >
+          {strings.quickCopy}
+        </button>
+        <span className="chev">▶</span>
       </summary>
       <div className="filebody">
         <textarea

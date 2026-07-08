@@ -1,7 +1,8 @@
-// v2 source file — supersedes the character-for-character copy of
+// v3 source file — supersedes the character-for-character copy of
 // reference/gym-bestie.html. Pasted verbatim from the owner's
-// updated file: prefix voice layer, log stamps, ledger reviews,
-// and the dev-mode combo-matrix build spec.
+// updated file: prefix voice layer, log stamps, ledger reviews, and
+// the dev-mode combo-matrix spec (v3 retires the completed
+// emoji-swap bullet).
 // (One backslash below is escaped; the string reads "D:\The Grind".)
 export const DEFAULT_FILE = `========== THE GRIND: SOURCE FILE ==========
 --- RULES (always apply) ---
@@ -212,16 +213,6 @@ TASK FOR CLAUDE CODE:
   codepoint except 🍽️ (keeps its variation
   selector). No ZWJ sequences anywhere.
   Render with the system emoji font.
-- ONE exception to the "don't touch the
-  deck" rule above, values only: the app
-  still uses the old person-cooking ZWJ
-  emoji for the cook chip in TWO spots —
-  chips.food[0].emoji in
-  src/config/defaults.js, and the deck
-  subsec hint in src/config/strings.js.
-  Swap both to single-codepoint 🍳 so the
-  deck matches this file. Labels and names
-  stay as-is. reference/ stays untouched.
 GRID 1 — PREFIX PAIRS (4x4, diagonal =
 sent alone; order never matters):
 👴 alone -> disappointed week review

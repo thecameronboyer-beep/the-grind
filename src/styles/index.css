@@ -330,11 +330,24 @@ button {
   display: none;
 }
 
+/* one-tap copy on the summary row — visible without expanding */
+.filebox summary .file-copy {
+  flex: none;
+  margin-left: auto;
+  padding: 7px 12px;
+  font-size: 11px;
+}
+
 .filebox .chev {
   margin-left: auto;
   color: var(--dim);
   font-size: 11px;
   transition: transform 0.15s ease;
+}
+
+/* the copy button takes the auto margin when present */
+.filebox summary .file-copy + .chev {
+  margin-left: 0;
 }
 
 .filebox[open] .chev {
