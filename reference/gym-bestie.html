@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GYM BESTIE</title>
+<style>
+  :root{
+    --bg:#0E0A17; --card:#191227; --card2:#151024; --border:#35284F;
+    --divider:#2B2140; --text:#F2EEFB; --muted:#A79BC8; --dim:#6E648C;
+    --violet:#9F7CFF; --magenta:#FF5CA8; --ice:#7DE8F0;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    padding:30px 16px 70px;
+  }
+  .wrap{max-width:480px; margin:0 auto;}
+
+  /* ---------- header ---------- */
+  .eyebrow{
+    text-align:center; color:var(--magenta); font-weight:700;
+    font-size:11px; letter-spacing:5px; margin-bottom:10px;
+  }
+  h1{
+    margin:0; text-align:center; font-size:42px; font-weight:800;
+    letter-spacing:5px;
+    text-shadow:-3px 0 rgba(60,150,160,.9), 3px 0 rgba(150,55,100,.9);
+  }
+  .tag{ text-align:center; color:var(--muted); font-size:14px; margin-top:8px;}
+
+  /* ---------- sections ---------- */
+  .sec{display:flex; align-items:center; gap:14px; margin:36px 0 4px;}
+  .sec b{font-size:14px; letter-spacing:3px; white-space:nowrap;}
+  .sec::after{content:""; flex:1; height:2px; background:var(--border); border-radius:2px;}
+  .sec.mag b{color:var(--magenta);} .sec.vio b{color:var(--violet);} .sec.ice b{color:var(--ice);}
+  .subsec{color:var(--muted); font-size:12.5px; margin:0 0 14px;}
+
+  /* ---------- cards / buttons ---------- */
+  .card{
+    background:var(--card); border:2px solid var(--border);
+    border-radius:18px; padding:16px;
+  }
+  .btn{
+    display:block; width:100%; border-radius:16px; border:2px solid var(--border);
+    background:var(--card); color:var(--text); font-weight:800; cursor:pointer;
+    font-size:16px; letter-spacing:1.5px; padding:16px; font-family:inherit;
+    transition:transform .06s ease, box-shadow .15s ease;
+  }
+  .btn:active{transform:scale(.985);}
+  .btn:focus-visible{outline:3px solid var(--ice); outline-offset:2px;}
+  .btn.mag{border-color:var(--magenta); color:var(--magenta);}
+  .btn.vio{border-color:var(--violet); color:var(--violet);}
+  .btn.small{
+    display:inline-block; width:auto; font-size:12px; padding:9px 14px;
+    letter-spacing:1px; border-radius:12px;
+  }
+  .btn.ghost{color:var(--muted); font-weight:700;}
+
+  /* ---------- source file ---------- */
+  details{border:2px solid var(--border); border-radius:18px; background:var(--card); overflow:hidden;}
+  summary{
+    list-style:none; cursor:pointer; padding:15px 16px; font-weight:800;
+    letter-spacing:1.5px; font-size:14px; display:flex; align-items:center; gap:10px;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary .chev{margin-left:auto; color:var(--dim); transition:transform .15s;}
+  details[open] .chev{transform:rotate(90deg);}
+  .filebody{padding:0 16px 16px;}
+  textarea{
+    width:100%; background:var(--card2); color:var(--text);
+    border:2px solid var(--divider); border-radius:12px; padding:12px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:12.5px; line-height:1.55; resize:vertical;
+  }
+  textarea:focus-visible{outline:none; border-color:var(--violet);}
+  #srcFile{min-height:320px;}
+  .filebar{display:flex; gap:10px; align-items:center; margin-top:10px;}
+  .saved{margin-left:auto; font-size:12px; color:var(--ice); opacity:0; transition:opacity .3s;}
+  .saved.show{opacity:1;}
+
+  /* ---------- emoji deck ---------- */
+  .rowlabel{
+    font-size:10.5px; letter-spacing:2.5px; font-weight:800;
+    color:var(--dim); margin:14px 0 8px;
+  }
+  .rowlabel:first-child{margin-top:0;}
+  .chips{display:grid; gap:8px;}
+  .chips.six{grid-template-columns:repeat(6,1fr);}
+  .chips.three{grid-template-columns:repeat(3,1fr);}
+  .chip{
+    background:var(--card2); border:2px solid var(--border); border-radius:14px;
+    padding:9px 2px 7px; cursor:pointer; display:flex; flex-direction:column;
+    align-items:center; gap:3px; font-family:inherit;
+    transition:border-color .12s, box-shadow .12s, transform .06s;
+  }
+  .chip:active{transform:scale(.94);}
+  .chip:focus-visible{outline:3px solid var(--ice); outline-offset:2px;}
+  .chip .e{font-size:25px; line-height:1;}
+  .chip .l{font-size:9px; letter-spacing:.5px; color:var(--muted); white-space:nowrap;}
+  .chip[aria-pressed="true"].mood{border-color:var(--magenta); box-shadow:0 0 12px rgba(255,92,168,.35);}
+  .chip[aria-pressed="true"].effort{border-color:var(--violet); box-shadow:0 0 12px rgba(159,124,255,.35);}
+  .chip[aria-pressed="true"].food{border-color:var(--ice); box-shadow:0 0 12px rgba(125,232,240,.35);}
+  .selbar{
+    display:none; margin-top:14px; padding:10px 14px; border-radius:12px;
+    background:var(--card2); border:2px dashed var(--border);
+    font-size:13px; color:var(--muted); align-items:center; gap:10px;
+  }
+  .selbar.show{display:flex;}
+  .selbar .combo{font-size:17px;}
+  .selbar button{
+    margin-left:auto; background:none; border:none; color:var(--dim);
+    font-size:13px; cursor:pointer; font-family:inherit; letter-spacing:1px; font-weight:700;
+  }
+
+  /* ---------- update station ---------- */
+  .upd{margin-bottom:12px;}
+  .updhead{display:flex; align-items:center; margin-bottom:8px;}
+  .updhead b{font-size:12px; letter-spacing:2.5px;}
+  .upd textarea{min-height:52px; font-family:inherit; font-size:13.5px;}
+  .updhead .btn{margin-left:auto;}
+  .upd.c-mag .updhead b{color:var(--magenta);} .upd.c-mag .btn{border-color:var(--magenta); color:var(--magenta);}
+  .upd.c-vio .updhead b{color:var(--violet);}  .upd.c-vio .btn{border-color:var(--violet); color:var(--violet);}
+  .upd.c-ice .updhead b{color:var(--ice);}     .upd.c-ice .btn{border-color:var(--ice); color:var(--ice);}
+  .hint{color:var(--dim); font-size:12px; margin-top:10px; line-height:1.5;}
+
+  /* ---------- toast + fallback ---------- */
+  #toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px);
+    background:var(--card); border:2px solid var(--violet); color:var(--text);
+    padding:12px 20px; border-radius:14px; font-size:14px; font-weight:700;
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
+    max-width:88vw; text-align:center; z-index:50;
+  }
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  #fallback{
+    display:none; position:fixed; inset:0; background:rgba(8,5,15,.92);
+    z-index:60; padding:24px 16px;
+  }
+  #fallback.show{display:flex; flex-direction:column; gap:12px;}
+  #fallback textarea{flex:1; min-height:0;}
+  #fallback p{color:var(--muted); font-size:13px; margin:0;}
+
+  /* ---------- footer ---------- */
+  footer{margin-top:44px; text-align:center;}
+  footer hr{border:none; height:2px; background:var(--border); margin-bottom:20px;}
+  .laws{font-size:11px; font-weight:800; letter-spacing:2px; color:var(--muted);}
+  .rac{font-size:13px; font-style:italic; color:var(--dim); margin-top:12px;}
+
+  .gap{height:10px;}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">T H E &nbsp; S O U R C E - F I L E &nbsp; S Y S T E M</div>
+  <h1>GYM BESTIE</h1>
+  <div class="tag">one file &middot; two prompts &middot; infinite gains</div>
+
+  <!-- ================= SOURCE FILE ================= -->
+  <div class="sec vio"><b>&#128196; SOURCE FILE</b></div>
+  <p class="subsec">lives here now &middot; everything below bundles it automatically</p>
+  <details id="fileBox">
+    <summary>the whole app is this text <span class="chev">&#9654;</span></summary>
+    <div class="filebody">
+      <textarea id="srcFile" spellcheck="false"></textarea>
+      <div class="filebar">
+        <button class="btn small ghost" id="copyFileBtn" type="button">copy file</button>
+        <button class="btn small ghost" id="resetBtn" type="button">reset to default</button>
+        <span class="saved" id="savedTag">saved &#10003;</span>
+      </div>
+    </div>
+  </details>
+
+  <!-- ================= EMOJI DECK ================= -->
+  <div class="sec mag"><b>EMOJI DECK</b></div>
+  <p class="subsec">tap = copied &middot; tap two rows and they copy together (&#128128;&thinsp;&#129489;&#8205;&#127859;)</p>
+  <div class="card">
+    <div class="rowlabel">MOOD &middot; PRE-WORKOUT</div>
+    <div class="chips six" id="moodRow"></div>
+    <div class="rowlabel">EFFORT &middot; POST-WORKOUT</div>
+    <div class="chips three" id="effortRow"></div>
+    <div class="rowlabel">FOOD MODE &middot; POST-WORKOUT</div>
+    <div class="chips three" id="foodRow"></div>
+    <div class="selbar" id="selbar">
+      on clipboard: <span class="combo" id="comboTxt"></span>
+      <button id="clearSel" type="button">clear &times;</button>
+    </div>
+  </div>
+
+  <!-- ================= BIG TWO ================= -->
+  <div class="sec vio"><b>THE BIG TWO</b></div>
+  <p class="subsec">fresh Gemini chat &rarr; tap &rarr; paste. done.</p>
+  <button class="btn mag" id="preBtn" type="button">&#9889; PRE-WORKOUT &mdash; copy prompt</button>
+  <div class="gap"></div>
+  <button class="btn vio" id="postBtn" type="button">&#127860; POST-WORKOUT &mdash; copy prompt</button>
+  <p class="hint">tip: tap a mood chip first and PRE bakes it in. leave it blank and you pick inside Gemini instead.</p>
+
+  <!-- ================= UPDATE STATION ================= -->
+  <div class="sec ice"><b>&#128295; UPDATE STATION</b></div>
+  <p class="subsec">type the change &rarr; copy &rarr; paste in Gemini &rarr; it returns the whole new file</p>
+  <div class="card">
+    <div class="upd c-mag">
+      <div class="updhead"><b>RULES</b><button class="btn small" data-upd="rules" type="button">copy update prompt</button></div>
+      <textarea id="upd-rules" placeholder="e.g. drop the raccoon bit (but why would you)"></textarea>
+    </div>
+    <div class="upd c-vio">
+      <div class="updhead"><b>SPLIT</b><button class="btn small" data-upd="split" type="button">copy update prompt</button></div>
+      <textarea id="upd-split" placeholder="e.g. move core to sunday, wed becomes rest"></textarea>
+    </div>
+    <div class="upd c-ice">
+      <div class="updhead"><b>FOOD</b><button class="btn small" data-upd="food" type="button">copy update prompt</button></div>
+      <textarea id="upd-food" placeholder="e.g. add thai + korean, drop the 15-min limit"></textarea>
+    </div>
+    <div class="upd c-mag">
+      <div class="updhead"><b>MUSIC</b><button class="btn small" data-upd="music" type="button">copy update prompt</button></div>
+      <textarea id="upd-music" placeholder="e.g. add crystal castles, map trap to cruising too"></textarea>
+    </div>
+    <p class="hint">when Gemini sends the new file back: copy it &rarr; paste it into &#128196; SOURCE FILE up top &rarr; it auto-saves. that IS the update.</p>
+  </div>
+
+  <footer>
+    <hr>
+    <div class="laws">THE SPLIT IS LAW &nbsp;&middot;&nbsp; MEXICAN FIRST &nbsp;&middot;&nbsp; COMMIT TO THE BIT</div>
+    <div class="rac">&#129437; raccoon ankles. &nbsp;jk jk.</div>
+  </footer>
+</div>
+
+<div id="toast"></div>
+
+<div id="fallback">
+  <p>clipboard said no &mdash; long-press inside, Select all, Copy:</p>
+  <textarea id="fallbackTxt" readonly></textarea>
+  <button class="btn vio" id="fallbackClose" type="button">done</button>
+</div>
+
+<script>
+/* ============ default source file (v3) ============ */
+const DEFAULT_FILE = `========== GYM BESTIE: SOURCE FILE ==========
+
+--- RULES (always apply) ---
+- Talk like a hyped 25-year-old bestie (no cap,
+  lowkey, ate, cooked) but keep sets, reps, and
+  ingredients crystal clear.
+- The split is LAW. Never change or add muscle
+  groups. No commentary about the split — it is
+  what it is.
+- Mood turns the dial, never the split:
+  😌 take it easy / 😴 running on fumes ->
+  lighter weight, 12-15 reps, relaxed pace
+  🙂 cruising -> normal weights, 8-12 reps
+  😤 locked in / 😡 rage -> heavier, 5-8 reps,
+  full rest between sets
+- Playlists: match my taste AND my mood. At
+  least 7 songs I haven't listed.
+  Format: Artist - Song.
+- MEXICAN FOOD is the #1 recommendation. Always
+  offered first, every mode.
+- Food bit: ALWAYS open any food rec with
+  "🦝 raccoon ankles." ...beat... "jk jk." Then
+  the real meal. Every time, all modes. Commit
+  to the bit.
+- Scale food to the damage: 💀 absolutely
+  cooked = bigger portions, protein + carbs
+  for recovery. 🚶 lowkey = keep it light.
+- 🧊 FRIDGE RAID: first ask me ONE question —
+  "what's in the fridge?" — and wait. When I
+  list it, recommend a meal using ONLY what I
+  listed plus basic pantry stuff (oil, salt,
+  spices). This is the one emoji that's allowed
+  to ask before cooking.
+- NEXT-UP MENU: end EVERY response with the
+  emoji options for the next step.
+  After a workout, end with:
+  "When you're done, come back with —
+  Effort: 🚶 lowkey / 💪 solid / 💀 cooked
+  Food: 🧑‍🍳 Let Her Cook / 🍽️ We Outside /
+  🧊 Fridge Raid"
+  After food, end with:
+  "Next session, pull up with a mood —
+  😡 rage / 😤 locked in / 🙂 cruising /
+  😌 take it easy / 😴 running on fumes / 😉"
+- If I reply with just emojis, treat them as
+  my picks. No questions, just go (except 🧊).
+- 😉 is ALWAYS listed in the mood menu but
+  NEVER accepted. If I send 😉, do NOT give a
+  workout. Tell me we do not use that one, and
+  ask me what exactly I'm thinking right now.
+  Stay suspicious until I pick a real mood.
+- Keep it tight. No essays.
+
+--- MY SPLIT ---
+MON: back + chest
+TUE: biceps + triceps + shoulders
+WED: core/abs
+THU: back + chest
+FRI: shoulders + biceps + triceps
+SAT: core/abs
+SUN: rest
+EQUIPMENT: standard gym (machines + free weights)
+
+--- MUSIC TASTE ---
+GENRES: witch house, trap, cloud rap,
+80s synthpop, cold darkwave, horrorcore
+
+ARTISTS I LOVE:
+(one per line)
+
+CURRENTLY OBSESSED:
+(what's on repeat)
+
+NEVER PLAY:
+(instant skips)
+
+MOOD MAPPING:
+😡 rage / 😤 locked in -> horrorcore, trap,
+witch house
+🙂 cruising -> cloud rap, 80s synthpop
+😌 take it easy / 😴 fumes -> cold darkwave,
+chill synthpop
+
+--- TASTE PROFILE (Gemini writes this) ---
+(ask Gemini: "summarize my music taste as a
+reusable profile" — paste the answer here and
+keep updating it over time)
+
+--- FOOD PROFILE ---
+#1: MEXICAN — always first
+OTHER CUISINES I LIKE: (add)
+HATES / NEVER: (add)
+RESTRICTIONS: none
+PROTEIN: high protein after every workout
+MAX COOK TIME: 15 min
+
+--- HOW TO USE ME ---
+PRE-WORKOUT: paste this whole file, then add:
+"Mood: [😡 rage / 😤 locked in / 🙂 cruising /
+😌 take it easy / 😴 running on fumes / 😉].
+Give me today's workout with the dial applied,
+a 10-song playlist, and one hype line."
+
+AFTER THAT: same chat, just send the emojis
+from the menu Gemini gives you.
+Examples: 💀 🧑‍🍳  or  💪 🧊
+
+FRESH CHAT LATER? Paste the file again + add:
+"Trained: [day]. Effort: [🚶/💪/💀]. Food mode:
+[🧑‍🍳 Let Her Cook / 🍽️ We Outside /
+🧊 Fridge Raid]. Feed me."
+
+=============================================`;
+
+/* ============ storage (localStorage w/ in-memory fallback) ============ */
+const store = (() => {
+  try {
+    localStorage.setItem('gb-test','1'); localStorage.removeItem('gb-test');
+    return localStorage;
+  } catch(e){
+    const m = {};
+    return { getItem:k=>(k in m?m[k]:null), setItem:(k,v)=>{m[k]=String(v);}, removeItem:k=>{delete m[k];} };
+  }
+})();
+
+/* ============ elements ============ */
+const $ = id => document.getElementById(id);
+const srcFile = $('srcFile');
+
+/* ============ init source file ============ */
+const savedFile = store.getItem('gb-file');
+srcFile.value = savedFile ?? DEFAULT_FILE;
+if (savedFile === null) $('fileBox').open = true;
+
+let saveTimer;
+srcFile.addEventListener('input', () => {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    store.setItem('gb-file', srcFile.value);
+    const tag = $('savedTag');
+    tag.classList.add('show');
+    setTimeout(() => tag.classList.remove('show'), 1500);
+  }, 400);
+});
+
+$('resetBtn').addEventListener('click', () => {
+  if (confirm('Reset the source file to the default? Her edits will be gone gone.')) {
+    srcFile.value = DEFAULT_FILE;
+    store.setItem('gb-file', DEFAULT_FILE);
+    toast('back to factory settings');
+  }
+});
+
+const getFile = () => srcFile.value.trim();
+
+/* ============ toast + copy ============ */
+let toastTimer;
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+async function copyText(text, msg){
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; }
+  catch(e){
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      ok = document.execCommand('copy');
+      ta.remove();
+    } catch(e2){ ok = false; }
+  }
+  if (ok) { toast(msg); }
+  else {
+    $('fallbackTxt').value = text;
+    $('fallback').classList.add('show');
+    $('fallbackTxt').focus();
+    $('fallbackTxt').select();
+  }
+}
+$('fallbackClose').addEventListener('click', () => $('fallback').classList.remove('show'));
+
+$('copyFileBtn').addEventListener('click', () =>
+  copyText(getFile(), 'file copied — back it up in Keep'));
+
+/* ============ emoji deck ============ */
+const DECK = {
+  mood: [
+    ['😡','rage'], ['😤','locked in'], ['🙂','cruising'],
+    ['😌','easy'], ['😴','fumes'], ['😉','?']
+  ],
+  effort: [ ['🚶','lowkey'], ['💪','solid'], ['💀','cooked'] ],
+  food:   [ ['🧑‍🍳','cook'], ['🍽️','outside'], ['🧊','fridge'] ]
+};
+const NAMES = {
+  mood:   { '😡':'rage', '😤':'locked in', '🙂':'cruising', '😌':'take it easy', '😴':'running on fumes', '😉':'' },
+  food:   { '🧑‍🍳':'Let Her Cook', '🍽️':'We Outside', '🧊':'Fridge Raid' },
+  effort: { '🚶':'lowkey', '💪':'solid', '💀':'absolutely cooked' }
+};
+const sel = { mood:null, effort:null, food:null };
+
+function renderRow(rowId, kind){
+  const row = $(rowId);
+  row.innerHTML = '';
+  DECK[kind].forEach(([e, label]) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip ' + kind;
+    b.setAttribute('aria-pressed', sel[kind] === e ? 'true' : 'false');
+    b.innerHTML = '<span class="e">' + e + '</span><span class="l">' + label + '</span>';
+    b.addEventListener('click', () => {
+      sel[kind] = (sel[kind] === e) ? null : e;
+      renderAll();
+      const combo = comboString();
+      if (combo) copyText(combo, 'copied ' + combo + ' — no cap');
+      else toast('selection cleared');
+    });
+    row.appendChild(b);
+  });
+}
+function comboString(){
+  return [sel.mood, sel.effort, sel.food].filter(Boolean).join(' ');
+}
+function renderAll(){
+  renderRow('moodRow','mood');
+  renderRow('effortRow','effort');
+  renderRow('foodRow','food');
+  const combo = comboString();
+  $('selbar').classList.toggle('show', !!combo);
+  $('comboTxt').textContent = combo;
+}
+$('clearSel').addEventListener('click', () => {
+  sel.mood = sel.effort = sel.food = null;
+  renderAll();
+  toast('cleared');
+});
+renderAll();
+
+/* ============ the big two ============ */
+const DAYS = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+const today = () => DAYS[new Date().getDay()];
+
+const MOOD_LIST = '[😡 rage / 😤 locked in / 🙂 cruising / 😌 take it easy / 😴 running on fumes]';
+const EFFORT_LIST = '[🚶 lowkey / 💪 solid / 💀 absolutely cooked]';
+const FOOD_LIST = '[🧑‍🍳 Let Her Cook / 🍽️ We Outside / 🧊 Fridge Raid]';
+
+function moodText(){
+  if (!sel.mood) return MOOD_LIST;
+  const n = NAMES.mood[sel.mood];
+  return n ? sel.mood + ' ' + n : sel.mood;
+}
+
+$('preBtn').addEventListener('click', () => {
+  const p = getFile() +
+    '\n\n———\nToday is ' + today() + '.' +
+    '\nMood: ' + moodText() + '.' +
+    '\nGive me today\'s workout with the dial applied, a 10-song playlist, and one hype line.';
+  copyText(p, 'PRE prompt copied — go paste it, bestie ⚡');
+  sel.mood = null;
+  renderAll();
+});
+
+$('postBtn').addEventListener('click', () => {
+  const e = sel.effort ? sel.effort + ' ' + NAMES.effort[sel.effort] : EFFORT_LIST;
+  const f = sel.food ? sel.food + ' ' + NAMES.food[sel.food] : FOOD_LIST;
+  const p = getFile() +
+    '\n\n———\nToday is ' + today() + '. Trained: today\'s split.' +
+    '\nEffort: ' + e + '.' +
+    '\nFood mode: ' + f + '.' +
+    '\nFeed me.';
+  copyText(p, 'POST copied — feed her, Gemini 🍴');
+  sel.effort = sel.food = null;
+  renderAll();
+});
+
+/* ============ update station ============ */
+const SECTIONS = {
+  rules: 'RULES',
+  split: 'MY SPLIT',
+  food:  'FOOD PROFILE',
+  music: 'MUSIC TASTE and MOOD MAPPING'
+};
+document.querySelectorAll('[data-upd]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.upd;
+    const input = $('upd-' + key).value.trim();
+    if (!input){ toast('type the changes first, bestie'); $('upd-' + key).focus(); return; }
+    const p =
+      'Update my GYM BESTIE source file. Change ONLY the ' + SECTIONS[key] +
+      ' section based on my request. Keep every other section EXACTLY as it is — same wording, same order.' +
+      '\n\nCHANGES I WANT:\n' + input +
+      '\n\nReply with the complete updated file in ONE plain-text code block and nothing else — no commentary. ' +
+      'I\'m copying it straight back into my app.' +
+      '\n\nMY CURRENT FILE:\n' + getFile();
+    copyText(p, SECTIONS[key].split(' ')[0] + ' update copied — paste in Gemini 🔧');
+    $('upd-' + key).value = '';
+  });
+});
+</script>
+</body>
+</html>
