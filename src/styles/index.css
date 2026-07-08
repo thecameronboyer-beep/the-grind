@@ -63,7 +63,7 @@ body::after {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 5;
+  z-index: 100; /* the CRT texture sits over every surface, dev mode included */
   background: repeating-linear-gradient(
     0deg,
     var(--scanline) 0 1px,
@@ -693,6 +693,187 @@ textarea::-webkit-scrollbar-thumb {
   font-style: italic;
   color: var(--dim);
   margin-top: 12px;
+}
+
+/* ---------- dev mode ---------- */
+/* CRT power-on: vertical unsquash with a couple of flickers */
+@keyframes crt-in {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.01);
+  }
+  30% {
+    opacity: 1;
+    transform: scaleY(1.02);
+  }
+  42% {
+    opacity: 0.4;
+    transform: none;
+  }
+  55% {
+    opacity: 1;
+  }
+  68% {
+    opacity: 0.65;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.devmode {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: radial-gradient(
+      120% 80% at 50% -10%,
+      color-mix(in srgb, var(--accent3) 6%, var(--bg)),
+      var(--bg) 60%
+    )
+    var(--bg);
+  overflow-y: auto;
+  animation: crt-in 0.45s cubic-bezier(0.2, 0.7, 0.3, 1);
+  transform-origin: 50% 35%;
+}
+
+.devmode-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 26px 16px 40px;
+}
+
+.dev-preview {
+  padding: 8px 0 4px;
+  transform: scale(0.82);
+  transform-origin: 50% 0;
+}
+
+.dev-preview .title {
+  cursor: default;
+}
+
+.devmode .sec {
+  margin-top: 30px;
+}
+
+.devmode > .devmode-inner > .sec:first-of-type {
+  margin-top: 6px;
+}
+
+.dev-sec b {
+  font-size: 13px;
+}
+
+.dev-field {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.dev-field span {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 5px;
+}
+
+.dev-field input[type='text'] {
+  width: 100%;
+  background: var(--well);
+  color: var(--text);
+  border: 1px solid var(--divider);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+}
+
+.dev-field input[type='text']:focus-visible {
+  outline: none;
+  border-color: var(--accent3);
+  box-shadow: 0 0 0 1px var(--accent3), 0 0 12px -4px var(--glow3);
+}
+
+.dev-colors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.dev-color {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--well);
+  border: 1px solid var(--divider);
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+
+.dev-color span {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.dev-color input[type='color'] {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+}
+
+.dev-color input[type='color']::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.dev-color input[type='color']::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
+
+.dev-chiprow {
+  display: grid;
+  grid-template-columns: 64px 1fr 1.4fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.dev-chiprow .dev-field {
+  margin-bottom: 0;
+}
+
+.dev-chiprow .dev-field span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dev-emoji input {
+  text-align: center;
+  font-size: 18px;
+}
+
+.dev-actions {
+  position: sticky;
+  bottom: 0;
+  margin-top: 28px;
+  padding: 14px 0 4px;
+  background: linear-gradient(180deg, transparent, var(--bg) 30%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.dev-actions .dev-reset {
+  grid-column: 1 / -1;
+  justify-self: center;
 }
 
 /* ---------- reduced motion ---------- */

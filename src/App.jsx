@@ -1,8 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { DEFAULT_FILE } from './config/defaultFile.js';
-import { UI, TOASTS } from './config/strings.js';
+import { DEFAULTS } from './config/defaults.js';
+import { UI, TOASTS, DEV } from './config/strings.js';
 import { buildPrePrompt, buildPostPrompt, buildUpdatePrompt } from './config/prompts.js';
-import { loadSettings } from './lib/settings.js';
+import { loadSettings, saveSettings } from './lib/settings.js';
 import { store, KEYS } from './lib/storage.js';
 import { writeClipboard } from './lib/clipboard.js';
 import Header from './components/Header.jsx';
@@ -14,6 +15,7 @@ import UpdateStation from './components/UpdateStation.jsx';
 import Toast from './components/Toast.jsx';
 import CopyFallback from './components/CopyFallback.jsx';
 import Footer from './components/Footer.jsx';
+import DevMode from './components/DevMode.jsx';
 
 const COLOR_VARS = {
   bg: '--bg',
@@ -27,13 +29,16 @@ const COLOR_VARS = {
 };
 
 export default function App() {
-  const [settings] = useState(loadSettings);
+  const [settings, setSettings] = useState(loadSettings);
   const [fileText, setFileText] = useState(() => store.get(KEYS.file) ?? DEFAULT_FILE);
   const [firstRun] = useState(() => store.get(KEYS.file) === null);
   const [sel, setSel] = useState({ mood: null, effort: null, food: null });
   const [toast, setToast] = useState({ message: '', show: false });
   const [fallbackText, setFallbackText] = useState(null);
+  const [devOpen, setDevOpen] = useState(false);
   const toastTimer = useRef();
+  const taps = useRef({ count: 0, timer: null });
+  const devBaseline = useRef(null);
 
   // the eight settings tokens are the only colors the CSS ever sees;
   // everything else derives from them via color-mix()
@@ -111,9 +116,48 @@ export default function App() {
     copy(buildUpdatePrompt(getFile(), section.section, changes), TOASTS.updateCopied(section.section));
   }
 
+  // 7 taps on the title, Android-developer-options style
+  function handleTitleTap() {
+    if (devOpen) return;
+    clearTimeout(taps.current.timer);
+    taps.current.count += 1;
+    const remaining = 7 - taps.current.count;
+    if (remaining <= 0) {
+      taps.current.count = 0;
+      devBaseline.current = settings;
+      setDevOpen(true);
+      showToast(DEV.enteredToast);
+    } else {
+      if (taps.current.count >= 4) showToast(DEV.countdown(remaining));
+      taps.current.timer = setTimeout(() => {
+        taps.current.count = 0;
+      }, 1500);
+    }
+  }
+
+  function handleDevSave() {
+    saveSettings(settings);
+    setDevOpen(false);
+    showToast(DEV.savedToast);
+  }
+
+  function handleDevClose() {
+    setSettings(devBaseline.current);
+    setDevOpen(false);
+  }
+
+  function handleDevReset() {
+    if (window.confirm(DEV.resetConfirm)) {
+      setSettings(DEFAULTS);
+      saveSettings(DEFAULTS);
+      devBaseline.current = DEFAULTS;
+      showToast(DEV.resetToast);
+    }
+  }
+
   return (
     <div className="wrap">
-      <Header app={settings.app} />
+      <Header app={settings.app} onTitleTap={handleTitleTap} />
 
       <SectionHeading
         accent={UI.sourceFile.accent}
@@ -154,6 +198,16 @@ export default function App() {
       />
 
       <Footer footer={settings.footer} />
+
+      {devOpen && (
+        <DevMode
+          settings={settings}
+          onChange={setSettings}
+          onSave={handleDevSave}
+          onClose={handleDevClose}
+          onReset={handleDevReset}
+        />
+      )}
 
       <Toast message={toast.message} show={toast.show} />
       {fallbackText != null && (

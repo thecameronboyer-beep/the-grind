@@ -57,6 +57,56 @@ export const UI = {
   },
 };
 
+export const DEV = {
+  title: 'DEV MODE',
+  subsec: 'values only · structure is law',
+  groups: [
+    { key: 'app', label: 'APP', accent: 'a2' },
+    { key: 'colors', label: 'COLORS', accent: 'a3' },
+    { key: 'mood', label: 'MOOD CHIPS', accent: 'a1' },
+    { key: 'effort', label: 'EFFORT CHIPS', accent: 'a2' },
+    { key: 'food', label: 'FOOD CHIPS', accent: 'a3' },
+    { key: 'buttons', label: 'BUTTONS', accent: 'a1' },
+    { key: 'footer', label: 'FOOTER', accent: 'a2' },
+  ],
+  appFields: [
+    { key: 'name', label: 'name' },
+    { key: 'eyebrow', label: 'eyebrow' },
+    { key: 'tagline', label: 'tagline' },
+  ],
+  colorFields: [
+    { key: 'bg', label: 'background' },
+    { key: 'card', label: 'card' },
+    { key: 'border', label: 'border' },
+    { key: 'text', label: 'text' },
+    { key: 'muted', label: 'muted text' },
+    { key: 'accent1', label: 'accent 1 · mood + pre' },
+    { key: 'accent2', label: 'accent 2 · effort + post' },
+    { key: 'accent3', label: 'accent 3 · food + updates' },
+  ],
+  chipFields: [
+    { key: 'emoji', label: 'emoji' },
+    { key: 'label', label: 'label' },
+    { key: 'name', label: 'full name (empty = emoji only)' },
+  ],
+  buttonFields: [
+    { key: 'pre', label: 'pre-workout' },
+    { key: 'post', label: 'post-workout' },
+  ],
+  footerFields: [
+    { key: 'laws', label: 'laws' },
+    { key: 'rac', label: 'raccoon line' },
+  ],
+  save: 'SAVE',
+  close: 'CLOSE',
+  reset: 'RESET TO DEFAULTS',
+  countdown: (n) => `${n} ${n === 1 ? 'tap' : 'taps'} from dev mode…`,
+  enteredToast: 'dev mode unlocked',
+  savedToast: 'saved — new fit locked in',
+  resetConfirm: 'Reset every setting to THE GRIND defaults?',
+  resetToast: 'defaults restored',
+};
+
 export const TOASTS = {
   fileCopied: 'file copied — back it up in Keep',
   factoryReset: 'back to factory settings',
