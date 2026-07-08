@@ -29,3 +29,34 @@ export function loadSettings() {
 export function saveSettings(settings) {
   store.set(KEYS.settings, JSON.stringify(settings));
 }
+
+function leavesAreStrings(value) {
+  if (typeof value === 'string') return true;
+  if (Array.isArray(value)) return value.every(leavesAreStrings);
+  if (value && typeof value === 'object') return Object.values(value).every(leavesAreStrings);
+  return false; // numbers, booleans, null — not valid settings leaves
+}
+
+// Validate pasted settings text. Returns a settings object rebuilt on
+// the DEFAULTS structure, or null if the paste isn't acceptable:
+// valid JSON, the five top-level keys, chip rows exactly 6/3/3, and
+// every leaf a string.
+export function parseSettings(text) {
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
+  for (const key of ['app', 'colors', 'chips', 'buttons', 'footer']) {
+    if (!(key in parsed)) return null;
+  }
+  const rows = { mood: 6, effort: 3, food: 3 };
+  if (!parsed.chips || typeof parsed.chips !== 'object') return null;
+  for (const [row, count] of Object.entries(rows)) {
+    if (!Array.isArray(parsed.chips[row]) || parsed.chips[row].length !== count) return null;
+  }
+  if (!leavesAreStrings(parsed)) return null;
+  return mergeInto(DEFAULTS, parsed);
+}

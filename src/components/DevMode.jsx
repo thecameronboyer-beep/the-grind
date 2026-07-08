@@ -1,8 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { DEV } from '../config/strings.js';
 import Header from './Header.jsx';
 
-export default function DevMode({ settings, onChange, onSave, onClose, onReset }) {
+export default function DevMode({
+  settings,
+  onChange,
+  onSave,
+  onClose,
+  onReset,
+  onCopySettings,
+  onPasteApply,
+}) {
+  const [pasteOpen, setPasteOpen] = useState(false);
+  const [pasteText, setPasteText] = useState('');
+
   // full-screen surface: keep the page behind from scrolling
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -98,6 +109,59 @@ export default function DevMode({ settings, onChange, onSave, onClose, onReset }
             {groupBody[group.key]}
           </section>
         ))}
+
+        <section>
+          <div className={`sec ${DEV.settingsGroup.accent} dev-sec`}>
+            <b>{DEV.settingsGroup.label}</b>
+          </div>
+          <div className="dev-share">
+            <button className="btn small a3" type="button" onClick={onCopySettings}>
+              {DEV.copySettings}
+            </button>
+            <button
+              className="btn small ghost"
+              type="button"
+              onClick={() => setPasteOpen((v) => !v)}
+            >
+              {DEV.pasteSettings}
+            </button>
+          </div>
+          {pasteOpen && (
+            <div className="dev-paste">
+              <textarea
+                value={pasteText}
+                onChange={(e) => setPasteText(e.target.value)}
+                placeholder={DEV.pasteLabel}
+                aria-label={DEV.pasteLabel}
+                spellCheck="false"
+              />
+              <div className="dev-paste-actions">
+                <button
+                  className="btn small a3"
+                  type="button"
+                  onClick={() => {
+                    if (onPasteApply(pasteText)) {
+                      setPasteOpen(false);
+                      setPasteText('');
+                    }
+                  }}
+                >
+                  {DEV.pasteApply}
+                </button>
+                <button
+                  className="btn small ghost"
+                  type="button"
+                  onClick={() => {
+                    setPasteOpen(false);
+                    setPasteText('');
+                  }}
+                >
+                  {DEV.pasteCancel}
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
 
         <div className="dev-actions">
           <button className="btn big a3" type="button" onClick={onSave}>

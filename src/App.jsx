@@ -3,7 +3,7 @@ import { DEFAULT_FILE } from './config/defaultFile.js';
 import { DEFAULTS } from './config/defaults.js';
 import { UI, TOASTS, DEV } from './config/strings.js';
 import { buildPrePrompt, buildPostPrompt, buildUpdatePrompt } from './config/prompts.js';
-import { loadSettings, saveSettings } from './lib/settings.js';
+import { loadSettings, saveSettings, parseSettings } from './lib/settings.js';
 import { store, KEYS } from './lib/storage.js';
 import { writeClipboard } from './lib/clipboard.js';
 import Header from './components/Header.jsx';
@@ -33,7 +33,7 @@ export default function App() {
   const [fileText, setFileText] = useState(() => store.get(KEYS.file) ?? DEFAULT_FILE);
   const [firstRun] = useState(() => store.get(KEYS.file) === null);
   const [sel, setSel] = useState({ mood: null, effort: null, food: null });
-  const [toast, setToast] = useState({ message: '', show: false });
+  const [toast, setToast] = useState({ message: '', show: false, action: null });
   const [fallbackText, setFallbackText] = useState(null);
   const [devOpen, setDevOpen] = useState(false);
   const toastTimer = useRef();
@@ -53,10 +53,14 @@ export default function App() {
 
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
-  function showToast(message) {
-    setToast({ message, show: true });
+  function showToast(message, action = null) {
+    setToast({ message, show: true, action });
     clearTimeout(toastTimer.current);
-    toastTimer.current = setTimeout(() => setToast((t) => ({ ...t, show: false })), 2200);
+    // action toasts linger long enough to actually hit UNDO
+    toastTimer.current = setTimeout(
+      () => setToast((t) => ({ ...t, show: false })),
+      action ? 6000 : 2200
+    );
   }
 
   async function copy(text, message) {
@@ -155,6 +159,36 @@ export default function App() {
     }
   }
 
+  function handleCopySettings() {
+    copy(JSON.stringify(settings, null, 2), DEV.settingsCopiedToast);
+  }
+
+  function applySettings(next) {
+    setSettings(next);
+    saveSettings(next);
+    devBaseline.current = next;
+  }
+
+  function handleUndoPaste() {
+    const raw = store.get(KEYS.settingsBackup);
+    const restored = raw ? parseSettings(raw) : null;
+    if (!restored) return;
+    applySettings(restored);
+    showToast(DEV.undoneToast);
+  }
+
+  function handlePasteApply(text) {
+    const next = parseSettings(text);
+    if (!next) {
+      showToast(DEV.pasteRejectToast);
+      return false;
+    }
+    store.set(KEYS.settingsBackup, JSON.stringify(settings));
+    applySettings(next);
+    showToast(DEV.pasteAppliedToast, { label: DEV.undo, fn: handleUndoPaste });
+    return true;
+  }
+
   return (
     <div className="wrap">
       <Header app={settings.app} onTitleTap={handleTitleTap} />
@@ -206,10 +240,17 @@ export default function App() {
           onSave={handleDevSave}
           onClose={handleDevClose}
           onReset={handleDevReset}
+          onCopySettings={handleCopySettings}
+          onPasteApply={handlePasteApply}
         />
       )}
 
-      <Toast message={toast.message} show={toast.show} />
+      <Toast
+        message={toast.message}
+        show={toast.show}
+        action={toast.action?.label}
+        onAction={() => toast.action?.fn()}
+      />
       {fallbackText != null && (
         <CopyFallback strings={UI.fallback} text={fallbackText} onClose={() => setFallbackText(null)} />
       )}
