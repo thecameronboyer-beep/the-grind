@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0E0A17" />
     <title>THE GRIND</title>
+    <link rel="preload" href="%BASE_URL%fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="%BASE_URL%fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <style>
+      @font-face {
+        font-family: 'Anton';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('%BASE_URL%fonts/anton-latin.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Space Grotesk';
+        font-style: normal;
+        font-weight: 300 700;
+        font-display: swap;
+        src: url('%BASE_URL%fonts/space-grotesk-latin.woff2') format('woff2');
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

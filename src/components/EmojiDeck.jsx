@@ -3,7 +3,7 @@ export default function EmojiDeck({ strings, chips, sel, combo, onToggle, onClea
     <div className="card">
       {strings.rows.map((row) => (
         <div key={row.kind}>
-          <div className="rowlabel">{row.label}</div>
+          <div className={`rowlabel ${row.accent}`}>{row.label}</div>
           <div className={`chips ${chips[row.kind].length === 6 ? 'six' : 'three'}`}>
             {chips[row.kind].map((chip, i) => (
               <button
