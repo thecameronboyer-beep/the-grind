@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { store, KEYS } from '../lib/storage.js';
 
 export default function SourceFile({ strings, value, firstRun, onChange, onCopyFile, onReset }) {
-  const [open, setOpen] = useState(firstRun);
+  // always starts collapsed; firstRun still drives the attention glow
+  const [open, setOpen] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
   const saveTimer = useRef();
   const flashTimer = useRef();
