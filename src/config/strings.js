@@ -17,7 +17,7 @@ export const UI = {
   deck: {
     accent: 'a1',
     title: 'EMOJI DECK',
-    subsec: 'tap = copied · tap two rows and they copy together (💀 🧑‍🍳)',
+    subsec: 'tap = copied · tap two rows and they copy together (💀 🍳)',
     rows: [
       { kind: 'mood',   label: 'MOOD · PRE-WORKOUT',       accent: 'a1' },
       { kind: 'effort', label: 'EFFORT · POST-WORKOUT',    accent: 'a2' },
@@ -116,6 +116,56 @@ export const DEV = {
   savedToast: 'saved — new fit locked in',
   resetConfirm: 'Reset every setting to THE GRIND defaults?',
   resetToast: 'defaults restored',
+};
+
+// Combo Matrix — a read-only dev-mode reference for what every emoji
+// combo means. Ported verbatim from the source file's build spec; the
+// deck itself never explains prefixes (mystery is the point), so this
+// lives here, dev-only. One const, one row per line: adding a row later
+// is a one-line change. Every glyph is a single codepoint except 🍽️,
+// which keeps its variation selector — no ZWJ sequences anywhere.
+export const COMBO_MATRIX = {
+  accent: 'a3',
+  title: 'COMBO MATRIX',
+  subsec: 'read-only · what each combo does · dev-only, never shown on the deck',
+  grids: [
+    {
+      key: 'prefixes',
+      accent: 'a1',
+      label: 'PREFIX PAIRS',
+      note: '4×4 · diagonal = sent alone · order never matters',
+      rows: [
+        { combo: '👴 alone', meaning: 'disappointed week review' },
+        { combo: '👵 alone', meaning: 'worried week review' },
+        { combo: '🤓 alone', meaning: 'stats week review' },
+        { combo: '🤮 alone', meaning: 'repulsed week review' },
+        { combo: '👴+👵', meaning: 'argue over what I meant, then go' },
+        { combo: '👴+🤓', meaning: 'boomer rant, with citations' },
+        { combo: '👴+🤮', meaning: 'gross AND overpriced' },
+        { combo: '👵+🤓', meaning: 'fussing, with footnotes' },
+        { combo: '👵+🤮', meaning: '"honey I can\'t watch you eat that"' },
+        { combo: '🤓+🤮', meaning: 'disgust, with sources' },
+      ],
+    },
+    {
+      key: 'effortfood',
+      accent: 'a2',
+      label: 'EFFORT × FOOD',
+      note: '3×3',
+      rows: [
+        { combo: '🚶🍳', meaning: 'light + quick cook' },
+        { combo: '🚶🍽️', meaning: 'light order' },
+        { combo: '🚶🧊', meaning: 'light fridge fix (asks first)' },
+        { combo: '💪🍳', meaning: 'protein cook' },
+        { combo: '💪🍽️', meaning: 'protein order' },
+        { combo: '💪🧊', meaning: 'protein fridge fix (asks first)' },
+        { combo: '💀🍳', meaning: 'max recovery, minimum steps' },
+        { combo: '💀🍽️', meaning: 'biggest recovery order' },
+        { combo: '💀🧊', meaning: 'laziest recovery food (asks first)' },
+      ],
+    },
+  ],
+  note: 'a prefix wraps ANY workflow combo (👴 💀 🍽️ = grandpa delivers the big recovery order). Voice never changes the pick.',
 };
 
 export const TOASTS = {

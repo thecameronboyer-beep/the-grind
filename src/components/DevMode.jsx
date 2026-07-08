@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { DEV } from '../config/strings.js';
+import { DEV, COMBO_MATRIX } from '../config/strings.js';
 import Header from './Header.jsx';
 
 export default function DevMode({
@@ -161,6 +161,33 @@ export default function DevMode({
               </div>
             </div>
           )}
+        </section>
+
+        {/* read-only reference — the deck never explains combos, dev mode does */}
+        <section className="dev-matrix">
+          <div className={`sec ${COMBO_MATRIX.accent} dev-sec`}>
+            <b>{COMBO_MATRIX.title}</b>
+          </div>
+          <p className="subsec">{COMBO_MATRIX.subsec}</p>
+
+          {COMBO_MATRIX.grids.map((grid) => (
+            <div className={`dev-grid ${grid.accent}`} key={grid.key}>
+              <div className="dev-grid-head">
+                <b>{grid.label}</b>
+                <span>{grid.note}</span>
+              </div>
+              <dl className="dev-combos">
+                {grid.rows.map((row) => (
+                  <div className="dev-combo" key={row.combo}>
+                    <dt className="dev-combo-key">{row.combo}</dt>
+                    <dd className="dev-combo-meaning">{row.meaning}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
+
+          <p className="dev-matrix-note">{COMBO_MATRIX.note}</p>
         </section>
 
         <div className="dev-actions">

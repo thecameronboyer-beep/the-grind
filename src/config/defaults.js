@@ -24,7 +24,7 @@ export const DEFAULTS = {
       { emoji: "💀", label: "cooked", name: "absolutely cooked" }
     ],
     food: [
-      { emoji: "🧑‍🍳", label: "cook",    name: "Let Her Cook" },
+      { emoji: "🍳", label: "cook",    name: "Let Her Cook" },
       { emoji: "🍽️", label: "outside", name: "We Outside" },
       { emoji: "🧊", label: "fridge",  name: "Fridge Raid" }
     ]
